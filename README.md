@@ -1,3 +1,5 @@
+https://www.kaggle.com/datasets/camnugent/sandp500 
+
 <img width="1179" height="562" alt="Screenshot 2026-04-30 at 5 38 57 PM" src="https://github.com/user-attachments/assets/010c93d3-30b8-4c99-a240-13eb4b39f582" />
 <img width="1167" height="515" alt="Screenshot 2026-04-30 at 5 39 16 PM" src="https://github.com/user-attachments/assets/1dd1aff4-de12-473c-a9a0-ffa8398dbf49" />
 <img width="1162" height="431" alt="Screenshot 2026-04-30 at 5 39 33 PM" src="https://github.com/user-attachments/assets/5a702432-4497-4b93-89e3-027041262893" />
