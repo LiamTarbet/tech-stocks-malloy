@@ -1,17 +1,13 @@
 >>>malloy
 import "tech_stocks.malloy"
-
 >>>markdown
 # Tech Stock Investment Analysis (2013–2018)
 
-This notebook analyzes 17 major tech stocks using daily price data from February 2013 to February 2018. All conclusions are drawn exclusively from data within that window — no future information is used anywhere.
-
----
+This dataset looks at 17 of the largest tech stocks from 2013 to 2018. I have been interested in stocks recently because I am trying to set myself up for the future.---
 
 ## 1 — Fastest Growing Stocks
 
-Measures each stock's price at the start of 2013 vs the end of 2018. Total return % shows how much $1,000 would have grown if you bought and held the entire time. NVDA at roughly +1,766% means $1,000 invested in early 2013 becomes around $18,000 by early 2018. This is the clearest measure of which companies created the most value over the five year period.
-
+This taught me about the fastest-growing stocks over this time. Overall, I learned that Nvidia went up even from 2013 to 2018. I thought that it was only a recent thing. I should have bought NVDA stock instead of a graphics card back then.
 >>>malloy
 run: stocks -> {
   group_by: ticker
@@ -24,14 +20,12 @@ run: stocks -> {
     , 1)
   order_by: total_return_pct desc
 }
-
 >>>markdown
 ---
 
 ## 2 — Biggest Losers That Were Worth a Lot
 
-Finds stocks that were already trading above $50 — meaning they were significant companies — but still had negative average daily returns in a given year. These are the painful years that test whether an investor holds or panic-sells. Several of these stocks recovered strongly the following year, which is one of the most important lessons in long-term investing.
-
+This looked at stocks that were trading over 50 dollars with the highest average losses. Overall, I learned that past losses don’t really influence the future.
 >>>malloy
 run: stocks -> {
   group_by: ticker, yr
@@ -42,14 +36,12 @@ run: stocks -> {
   order_by: avg_daily_return asc
   limit: 10
 }
-
 >>>markdown
 ---
 
 ## 3 — Projected to Be Worth Something
 
-Looks at the final 90 days of the dataset (November 2017 to February 2018) and finds stocks with a consistently positive average daily return during that window. This is not a prediction of the future — it is a signal that the market was actively rewarding these stocks at the point the data cuts off. High volume alongside a positive return makes the signal stronger.
-
+This looks at the last 90 days and predicts what will do well following the dataset. Overall, I learned that you can’t predict the future based on the last 90 positive days of stocks.
 >>>malloy
 run: stocks -> {
   where: `date` >= @2017-11-01
@@ -62,14 +54,12 @@ run: stocks -> {
   order_by: avg_daily_return desc
   limit: 3
 }
-
 >>>markdown
 ---
 
 ## 4 — Projected to Lose Over Time
 
-The mirror of the previous query — stocks with a negative average daily return in the final 90 days of the dataset. These stocks were already losing ground before the data ends. That does not mean they were bad companies, but the market was not rewarding them in that window. Combined with high volatility, a negative late-period trend is one of the clearest warning signs available in a historical dataset like this one.
-
+This looked at the last 90 days and predicted what was going to happen negatively following. Overall, I learned that you kind of must ride the wave for a long time if you want to see gains. Seems that stocks that have done badly in the past tend to do well in the future
 >>>malloy
 run: stocks -> {
   where: `date` >= @2017-11-01
