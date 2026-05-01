@@ -1,0 +1,8 @@
+data/all_stocks_5yr.csv
+data/*.csv
+__pycache__/
+*.pyc
+.DS_Store
+.vscode/settings.json
+*.duckdb
+*.ddb

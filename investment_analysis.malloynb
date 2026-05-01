@@ -1,0 +1,84 @@
+>>>malloy
+import "tech_stocks.malloy"
+
+>>>markdown
+# Tech Stock Investment Analysis (2013–2018)
+
+This notebook analyzes 17 major tech stocks using daily price data from February 2013 to February 2018. All conclusions are drawn exclusively from data within that window — no future information is used anywhere.
+
+---
+
+## 1 — Fastest Growing Stocks
+
+Measures each stock's price at the start of 2013 vs the end of 2018. Total return % shows how much $1,000 would have grown if you bought and held the entire time. NVDA at roughly +1,766% means $1,000 invested in early 2013 becomes around $18,000 by early 2018. This is the clearest measure of which companies created the most value over the five year period.
+
+>>>malloy
+run: stocks -> {
+  group_by: ticker
+  aggregate:
+    start_price      is avg(close) { where: `date` <= @2013-03-01 }
+    end_price        is avg(close) { where: `date` >= @2018-01-15 }
+    total_return_pct is round(
+      (avg(close) { where: `date` >= @2018-01-15 } - avg(close) { where: `date` <= @2013-03-01 })
+      / avg(close) { where: `date` <= @2013-03-01 } * 100
+    , 1)
+  order_by: total_return_pct desc
+}
+
+>>>markdown
+---
+
+## 2 — Biggest Losers That Were Worth a Lot
+
+Finds stocks that were already trading above $50 — meaning they were significant companies — but still had negative average daily returns in a given year. These are the painful years that test whether an investor holds or panic-sells. Several of these stocks recovered strongly the following year, which is one of the most important lessons in long-term investing.
+
+>>>malloy
+run: stocks -> {
+  group_by: ticker, yr
+  aggregate:
+    peak_price       is max_close
+    avg_daily_return
+  having: peak_price > 50 and avg_daily_return < 0
+  order_by: avg_daily_return asc
+  limit: 10
+}
+
+>>>markdown
+---
+
+## 3 — Projected to Be Worth Something
+
+Looks at the final 90 days of the dataset (November 2017 to February 2018) and finds stocks with a consistently positive average daily return during that window. This is not a prediction of the future — it is a signal that the market was actively rewarding these stocks at the point the data cuts off. High volume alongside a positive return makes the signal stronger.
+
+>>>malloy
+run: stocks -> {
+  where: `date` >= @2017-11-01
+  group_by: ticker
+  aggregate:
+    last_price       is avg(close) { where: `date` >= @2018-01-31 }
+    avg_daily_return
+    avg_volume
+  having: avg_daily_return > 0
+  order_by: avg_daily_return desc
+  limit: 3
+}
+
+>>>markdown
+---
+
+## 4 — Projected to Lose Over Time
+
+The mirror of the previous query — stocks with a negative average daily return in the final 90 days of the dataset. These stocks were already losing ground before the data ends. That does not mean they were bad companies, but the market was not rewarding them in that window. Combined with high volatility, a negative late-period trend is one of the clearest warning signs available in a historical dataset like this one.
+
+>>>malloy
+run: stocks -> {
+  where: `date` >= @2017-11-01
+  group_by: ticker
+  aggregate:
+    last_price       is avg(close) { where: `date` >= @2018-01-31 }
+    avg_daily_return
+    avg_volume
+  having: avg_daily_return < 0
+  order_by: avg_daily_return asc
+  limit: 3
+}

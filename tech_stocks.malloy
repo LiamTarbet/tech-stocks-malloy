@@ -1,0 +1,51 @@
+// ============================================================
+//  Tech Stocks — Malloy Model
+//  Dataset : S&P 500 daily OHLCV, filtered to 17 tech tickers
+//  Date range : 2013-02-08 → 2018-02-07
+// ============================================================
+
+source: stocks is duckdb.table('./data/tech_stocks.parquet') extend {
+
+  dimension: yr         is year(`date`)
+  dimension: qtr        is quarter(`date`)
+  dimension: month_name is strftime!(`date`, '%Y-%m')
+
+  dimension: daily_return_pct is round(((close - open) / open) * 100, 2)
+  dimension: daily_range_pct  is round(((high - low) / low) * 100, 2)
+
+  measure: avg_close        is close.avg()
+  measure: avg_open         is open.avg()
+  measure: total_volume     is volume.sum()
+  measure: avg_volume       is volume.avg()
+  measure: max_close        is close.max()
+  measure: min_close        is close.min()
+  measure: row_count        is count()
+  measure: price_range      is max_close - min_close
+  measure: avg_daily_return is daily_return_pct.avg()
+  measure: avg_volatility   is daily_range_pct.avg()
+
+  view: by_ticker is {
+    group_by: ticker
+    aggregate:
+      avg_close
+      total_volume
+      avg_daily_return
+      avg_volatility
+      max_close
+      min_close
+      price_range
+      row_count
+  }
+
+  view: by_ticker_month is {
+    group_by: ticker, month_name
+    aggregate: avg_close, total_volume, avg_daily_return
+    order_by: ticker, month_name
+  }
+
+  view: by_ticker_year is {
+    group_by: ticker, yr
+    aggregate: avg_close, total_volume, avg_daily_return, avg_volatility
+    order_by: yr, ticker
+  }
+}
